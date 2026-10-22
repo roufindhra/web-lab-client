@@ -10,8 +10,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
+        <Route path="/" element={<MainLayout headerVariant="landing" />}>
           <Route index element={<Landing />} />
+        </Route>
+        <Route element={<MainLayout />}>
           <Route path="auth/login" element={<Login />} />
           <Route
             path="dashboard"

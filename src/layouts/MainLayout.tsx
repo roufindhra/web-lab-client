@@ -2,12 +2,17 @@ import { Link, Outlet } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import Footer from './Footer'
 
-export default function MainLayout() {
+interface MainLayoutProps {
+  headerVariant?: 'light' | 'landing'
+}
+
+export default function MainLayout({ headerVariant = 'light' }: MainLayoutProps) {
   const { isAuthenticated, user, logout } = useAuth()
+  const isLanding = headerVariant === 'landing'
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b bg-white">
+      <header className={isLanding ? 'bg-navy text-white' : 'border-b bg-white'}>
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Link to="/" className="text-lg font-bold">
             Lab SGG
@@ -15,16 +20,26 @@ export default function MainLayout() {
           <nav className="flex items-center gap-4">
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link
+                  to="/dashboard"
+                  className={`text-sm ${isLanding ? 'text-gray-200 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                >
                   Dashboard
                 </Link>
-                <Link to="/alat" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link
+                  to="/alat"
+                  className={`text-sm ${isLanding ? 'text-gray-200 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                >
                   Peminjaman Alat
                 </Link>
-                <span className="text-sm text-gray-500">{user?.nama}</span>
+                <span className={`text-sm ${isLanding ? 'text-gray-300' : 'text-gray-500'}`}>
+                  {user?.nama}
+                </span>
                 <button
                   onClick={() => void logout()}
-                  className="rounded-md bg-gray-900 px-3 py-1.5 text-sm text-white hover:bg-gray-700"
+                  className={`rounded-md px-3 py-1.5 text-sm text-white transition ${
+                    isLanding ? 'bg-accent-orange hover:brightness-110' : 'bg-gray-900 hover:bg-gray-700'
+                  }`}
                 >
                   Logout
                 </button>
@@ -32,7 +47,9 @@ export default function MainLayout() {
             ) : (
               <Link
                 to="/auth/login"
-                className="rounded-md bg-gray-900 px-3 py-1.5 text-sm text-white hover:bg-gray-700"
+                className={`rounded-md px-3 py-1.5 text-sm text-white transition ${
+                  isLanding ? 'bg-accent-orange hover:brightness-110' : 'bg-gray-900 hover:bg-gray-700'
+                }`}
               >
                 Login
               </Link>
@@ -43,7 +60,10 @@ export default function MainLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer companyName="Lab Survei Geodesi dan Geometri - UPN Veteran Yogyakarta" />
+      <Footer
+        companyName="Lab Survei Geodesi dan Geometri - UPN Veteran Yogyakarta"
+        variant={isLanding ? 'landing' : 'default'}
+      />
     </div>
   )
 }
