@@ -31,3 +31,28 @@ export function getPublicPraktikum() {
 export function getPublicAgenda() {
   return api<{ data: JadwalItem[] }>('/api/public/agenda')
 }
+
+export interface AkademikMateri {
+  materi_id: number
+  materi_nama: string
+  deskripsi: string
+}
+
+export interface AkademikPraktikum {
+  id: number
+  label: string
+  slug: string
+  semester: string
+  dosen: string[]
+  jadwal: {
+    plug: string
+    hari: string
+    jam_mulai: string
+    jam_selesai: string
+  }[]
+  materi: AkademikMateri[]
+}
+
+export function getPublicAkademik() {
+  return api<{ data: AkademikPraktikum[] }>('/api/public/akademik')
+}
