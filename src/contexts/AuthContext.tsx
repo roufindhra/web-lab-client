@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     await authService.logout()
     setUser(null)
-    window.location.href = '/auth/login'
+    window.location.href = '/?login=1'
   }, [])
 
   const hasRole = useCallback((role: string) => user?.role === role, [user])

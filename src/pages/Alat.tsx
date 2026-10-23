@@ -13,8 +13,8 @@ import {
   type PeminjamanStatus,
 } from '@/services'
 import { useAuth } from '@/contexts/AuthContext'
-import AlatDetailModal from './Alat/_components/AlatDetailModal'
-import PeminjamanFormModal from './Alat/_components/PeminjamanFormModal'
+import AlatDetailModal from '../components/AlatDetailModal'
+import PeminjamanFormModal from '../components/PeminjamanFormModal'
 
 const KETERSEDIAAN_LABELS: Record<KetersediaanStatus, string> = {
   tersedia: 'Tersedia',
@@ -76,21 +76,21 @@ export default function AlatPage() {
 
   const alatList = useMemo(() => katalog.flatMap((grup) => grup.items), [katalog])
 
-  const loadPeminjaman = useCallback(async (page: number) => {
-    const response = await peminjamanService.list(page)
-    setPeminjamanList(response.data)
-    setPeminjamanMeta(response.meta)
+  const loadPeminjaman = useCallback((page: number) => {
+    return peminjamanService.list(page).then((response) => {
+      setPeminjamanList(response.data)
+      setPeminjamanMeta(response.meta)
+    })
   }, [])
 
-  const loadAlat = useCallback(async () => {
-    const response = await alatService.getAll()
-    setKatalog(response.data)
+  const loadAlat = useCallback(() => {
+    return alatService.getAll().then((response) => {
+      setKatalog(response.data)
+    })
   }, [])
 
   useEffect(() => {
     let cancelled = false
-    setIsLoading(true)
-    setError(null)
 
     Promise.all([loadPeminjaman(peminjamanPage), loadAlat()])
       .catch((err) => {
@@ -107,9 +107,15 @@ export default function AlatPage() {
     }
   }, [loadPeminjaman, loadAlat, peminjamanPage])
 
+  const goToPeminjamanPage = (page: number) => {
+    setIsLoading(true)
+    setError(null)
+    setPeminjamanPage(page)
+  }
+
   const handlePengajuanSuccess = async () => {
     setIsModalOpen(false)
-    setPeminjamanPage(1)
+    goToPeminjamanPage(1)
     await Promise.all([loadPeminjaman(1), loadAlat()])
   }
 
@@ -216,7 +222,7 @@ export default function AlatPage() {
         <Pagination
           page={peminjamanPage}
           meta={peminjamanMeta}
-          onChange={setPeminjamanPage}
+          onChange={goToPeminjamanPage}
         />
       )}
 
