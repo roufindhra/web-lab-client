@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom'
+interface HeroProps {
+  onLoginClick: () => void
+}
 
-export default function Hero() {
+export default function Hero({ onLoginClick }: HeroProps) {
   return (
     <section className="bg-gradient-to-br from-navy to-navy-dark text-white">
       <div className="mx-auto max-w-6xl px-4 py-24 text-center">
@@ -15,12 +17,13 @@ export default function Hero() {
           bagi mahasiswa dan dosen Program Studi Teknik Geomatika.
         </p>
         <div className="mt-8 flex items-center justify-center gap-4">
-          <Link
-            to="/auth/login"
+          <button
+            type="button"
+            onClick={onLoginClick}
             className="rounded-md bg-accent-orange px-6 py-3 font-semibold text-white transition hover:brightness-110"
           >
             Login Mahasiswa / Asisten
-          </Link>
+          </button>
           <a
             href="#praktikum"
             className="rounded-md border-2 border-white px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-navy"

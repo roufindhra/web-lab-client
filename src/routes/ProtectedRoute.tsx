@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children, roles }: ProtectedRouteProps)
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth/login" replace />
+    return <Navigate to="/?login=1" replace />
   }
 
   if (roles && !roles.some((role) => hasRole(role))) {
