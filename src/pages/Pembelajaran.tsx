@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getPublicAkademik, type AkademikPraktikum } from '@/services/public'
 import { useScrollSpy } from '@/hooks/useScrollSpy'
 
@@ -26,6 +26,24 @@ export default function Pembelajaran() {
 
   const activeId = useScrollSpy(navIds)
 
+  const navRef = useRef<HTMLElement>(null)
+
+  // Item aktif bisa berada di luar area terlihat nav (nav punya scrollbar
+  // internal sendiri) — gulirkan nav agar item aktif selalu tampak.
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav || !activeId) return
+    const el = nav.querySelector<HTMLElement>(`[data-nav-id="${CSS.escape(activeId)}"]`)
+    if (!el) return
+    const top = el.offsetTop
+    const bottom = top + el.offsetHeight
+    if (top < nav.scrollTop) {
+      nav.scrollTop = top
+    } else if (bottom > nav.scrollTop + nav.clientHeight) {
+      nav.scrollTop = bottom - nav.clientHeight
+    }
+  }, [activeId])
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -46,9 +64,19 @@ export default function Pembelajaran() {
 
       {praktikumList && praktikumList.length > 0 && (
         <div className="mt-10 flex gap-10">
-          {/* Side-nav gaya dokumentasi */}
+          {/* Konten */}
+          <div className="min-w-0 flex-1">
+            {praktikumList.map((praktikum, index) => (
+              <PraktikumSection key={praktikum.slug} praktikum={praktikum} zebra={index % 2 === 1} />
+            ))}
+          </div>
+
+          {/* Side-nav gaya dokumentasi (kanan) */}
           <aside className="hidden w-64 shrink-0 lg:block">
-            <nav className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
+            <nav
+              ref={navRef}
+              className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pl-2"
+            >
               {praktikumList.map((praktikum) => (
                 <div key={praktikum.slug} className="mb-5">
                   <NavItem
@@ -86,13 +114,6 @@ export default function Pembelajaran() {
               ))}
             </nav>
           </aside>
-
-          {/* Konten */}
-          <div className="min-w-0 flex-1">
-            {praktikumList.map((praktikum, index) => (
-              <PraktikumSection key={praktikum.slug} praktikum={praktikum} zebra={index % 2 === 1} />
-            ))}
-          </div>
         </div>
       )}
     </div>
@@ -116,6 +137,7 @@ function NavItem({
   return (
     <button
       type="button"
+      data-nav-id={id}
       onClick={() => onClick(id)}
       className={`block w-full truncate rounded px-2 py-1 text-left text-sm transition ${
         isActive ? 'bg-navy/5 font-semibold text-navy' : 'text-gray-600 hover:text-navy'

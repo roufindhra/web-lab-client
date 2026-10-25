@@ -45,7 +45,9 @@ export default function MainLayout() {
         />
 
         <div className="flex flex-1 flex-col">
-          <main className="flex-1 overflow-x-hidden p-4 md:p-6">
+          <main className="flex-1 overflow-x-clip p-4 md:p-6">
+            {/* overflow-x-clip, bukan -hidden: hidden menjadikan main scroll container
+                dan mematikan position:sticky (TOC scroll-spy) di halaman di dalamnya */}
             <Breadcrumb />
             <Outlet />
           </main>
