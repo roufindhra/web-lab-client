@@ -1,54 +1,35 @@
-// import { BrowserRouter, Route, Routes } from 'react-router-dom'
-// import MainLayout from '@/layouts/MainLayout'
-// import Landing from '@/pages/Landing'
-// import Login from '@/pages/auth/Login'
-// import Dashboard from '@/pages/Dashboard'
-// import ProtectedRoute from '@/routes/ProtectedRoute'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-// export default function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" element={<MainLayout />}>
-//           <Route index element={<Landing />} />
-//           <Route path="auth/login" element={<Login />} />
-//           <Route
-//             path="dashboard"
-//             element={
-//               <ProtectedRoute roles={['mahasiswa', 'asisten']}>
-//                 <Dashboard />
-//               </ProtectedRoute>
-//             }
-//           />
-//         </Route>
-//       </Routes>
-//     </BrowserRouter>
-//   )
-// }
+// Pages
+import MainLayout from '@/layouts/MainLayout'
+import Landing from '@/pages/Landing'
+import Dashboard from '@/pages/Dashboard'
+import AlatPage from '@/pages/Alat'
+import Pembelajaran from '@/pages/Pembelajaran'
+import Riset from '@/pages/Riset'
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MainLayout from "@/layouts/MainLayout";
-import Landing from "@/pages/Landing";
-import Login from "@/pages/auth/Login";
-import Dashboard from "@/pages/Dashboard";
-import ProtectedRoute from "@/routes/ProtectedRoute";
-import { DesignSystemTest } from "@/pages/designsystemtest";
+// Auth function
+import ProtectedRoute from '@/routes/ProtectedRoute'
+
+// Test 
+import { DesignSystemTest } from "@/pages/designsystemtest';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Landing />} />
-          <Route path="auth/login" element={<Login />} />
-          <Route
-            path="dashboard"
-            element={
-              <ProtectedRoute roles={["mahasiswa", "asisten"]}>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+        {/* Public access */}
+        <Route path="/" element={<MainLayout headerVariant="landing" />}>
+          <Route index element={<Landing />}/>
+          <Route path="akademik" element={<Pembelajaran />}/>
+          <Route path="riset" element={<Riset />}/>
+        </Route>
+
+        {/* Auth needed */}
+        <Route element={<MainLayout />}>
+          <Route path="dashboard" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}><Dashboard /></ProtectedRoute>}/>
+          <Route path="alat" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}> <AlatPage /> </ProtectedRoute>}/>
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         {/* cuma buat ngetes doang */}
         <Route path="/test" element={<DesignSystemTest />} />
