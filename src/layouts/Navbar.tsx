@@ -1,15 +1,21 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 
 interface NavbarProps {
   onToggleSidebar?: () => void;
+  onLogout?: () => void;
   user?: {
     name: string;
     role: string;
   };
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, user }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  onToggleSidebar,
+  onLogout,
+  user,
+}) => {
   return (
     <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-surface px-4 shadow-xs md:px-6">
       <div className="flex items-center gap-3">
@@ -44,9 +50,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, user }) => {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-accent font-semibold text-xs text-primary">
               {user.name.substring(0, 2).toUpperCase()}
             </div>
+            {onLogout && (
+              <Button variant="outline" size="sm" onClick={onLogout}>
+                Logout
+              </Button>
+            )}
           </div>
         ) : (
-          <Button variant="outline" size="sm">Masuk</Button>
+          <Link to="/?login=1">
+            <Button variant="primary" size="sm">Masuk</Button>
+          </Link>
         )}
       </div>
     </header>
