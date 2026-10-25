@@ -12,14 +12,14 @@ import Riset from '@/pages/Riset'
 import ProtectedRoute from '@/routes/ProtectedRoute'
 
 // Test 
-import { DesignSystemTest } from "@/pages/designsystemtest';
+import { DesignSystemTest } from "@/pages/designsystemtest"
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public access */}
-        <Route path="/" element={<MainLayout headerVariant="landing" />}>
+        <Route path="/" element={<MainLayout />}>
           <Route index element={<Landing />}/>
           <Route path="akademik" element={<Pembelajaran />}/>
           <Route path="riset" element={<Riset />}/>

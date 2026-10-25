@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-primary: #1a5e63;
   --color-primary-hover: #14494d;
   --color-secondary: #ff9800;
-  
+
   --color-surface: #ffffff;
   --color-surface-text: #252525;
   --color-surface-container: #f3f3f3;
@@ -13,6 +14,8 @@
 
   --color-navy: #002147;
   --color-navy-dark: #001a38;
+  --color-teal-section: #1a5e63;
+  --color-accent-orange: #ff9800;
   --color-accent-yellow: #ffd134;
   --color-gray-btn: #b7b5b5;
 
