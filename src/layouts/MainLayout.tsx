@@ -12,6 +12,8 @@ const menuItems: MenuItem[] = [
   { label: "Beranda", path: "/" },
   { label: "Dashboard", path: "/dashboard", authRequired: true },
   { label: "Peminjaman Alat", path: "/alat", authRequired: true },
+  { label: "Pembelajaran", path: "/akademik"},
+  { label: "Riset", path:"/riset" },
   { label: "Design System Test", path: "/test" },
 ];
 
