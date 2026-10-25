@@ -11,6 +11,9 @@ import Riset from '@/pages/Riset'
 // Auth function
 import ProtectedRoute from '@/routes/ProtectedRoute'
 
+// Test 
+import { DesignSystemTest } from "@/pages/designsystemtest';
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -28,7 +31,9 @@ export default function App() {
           <Route path="alat" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}> <AlatPage /> </ProtectedRoute>}/>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
+        {/* cuma buat ngetes doang */}
+        <Route path="/test" element={<DesignSystemTest />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
