@@ -7,6 +7,7 @@ import Dashboard from '@/pages/Dashboard'
 import AlatPage from '@/pages/Alat'
 import Pembelajaran from '@/pages/Pembelajaran'
 import Riset from '@/pages/Riset'
+import SewaPage from '@/pages/Sewa'
 
 // Auth function
 import ProtectedRoute from '@/routes/ProtectedRoute'
@@ -23,6 +24,7 @@ export default function App() {
           <Route index element={<Landing />}/>
           <Route path="akademik" element={<Pembelajaran />}/>
           <Route path="riset" element={<Riset />}/>
+          <Route path="sewa" element={<SewaPage />}/>
         </Route>
 
         {/* Auth needed */}

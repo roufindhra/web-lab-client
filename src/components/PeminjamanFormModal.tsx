@@ -1,23 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ApiError, peminjamanService, type Alat, type PeminjamanOptions } from '@/services'
-
-interface ItemRow {
-  key: number
-  alat_id: string
-  jumlah: string
-}
+import { ApiError, peminjamanService, type PeminjamanOptions } from '@/services'
+import { useCart } from '@/contexts/CartContext'
 
 interface Props {
-  alatList: Alat[]
   onClose: () => void
   onSuccess: () => void
 }
 
-export default function PeminjamanFormModal({ alatList, onClose, onSuccess }: Props) {
+export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
+  const { items } = useCart()
   const [options, setOptions] = useState<PeminjamanOptions | null>(null)
   const [keperluan, setKeperluan] = useState('')
   const [praktikumSlug, setPraktikumSlug] = useState('')
-  const [rows, setRows] = useState<ItemRow[]>([{ key: 1, alat_id: '', jumlah: '1' }])
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -34,27 +28,10 @@ export default function PeminjamanFormModal({ alatList, onClose, onSuccess }: Pr
     return (
       keperluan !== '' &&
       (keperluan !== 'praktikum' || praktikumSlug !== '') &&
-      rows.length > 0 &&
-      rows.every((row) => {
-        if (row.alat_id === '') return false
-        const alat = alatList.find((item) => item.id === Number(row.alat_id))
-        const jumlah = Number(row.jumlah)
-        return alat !== undefined && Number.isInteger(jumlah) && jumlah >= 1 && jumlah <= alat.jumlah
-      })
+      items.length > 0 &&
+      items.every((item) => item.jumlah >= 1 && item.jumlah <= item.max_jumlah)
     )
-  }, [keperluan, praktikumSlug, rows, alatList])
-
-  const updateRow = (key: number, patch: Partial<ItemRow>) => {
-    setRows((current) => current.map((row) => (row.key === key ? { ...row, ...patch } : row)))
-  }
-
-  const addRow = () => {
-    setRows((current) => [...current, { key: Math.max(0, ...current.map((row) => row.key)) + 1, alat_id: '', jumlah: '1' }])
-  }
-
-  const removeRow = (key: number) => {
-    setRows((current) => current.filter((row) => row.key !== key))
-  }
+  }, [keperluan, praktikumSlug, items])
 
   const handleSubmit = async () => {
     if (!isFormValid || isSaving) return
@@ -64,7 +41,7 @@ export default function PeminjamanFormModal({ alatList, onClose, onSuccess }: Pr
       await peminjamanService.create({
         keperluan,
         ...(keperluan === 'praktikum' && { praktikum_slug: praktikumSlug }),
-        items: rows.map((row) => ({ alat_id: Number(row.alat_id), jumlah: Number(row.jumlah) })),
+        items: items.map((item) => ({ alat_id: item.alat_id, jumlah: item.jumlah })),
       })
       onSuccess()
     } catch (err) {
@@ -85,6 +62,20 @@ export default function PeminjamanFormModal({ alatList, onClose, onSuccess }: Pr
         </p>
 
         {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+
+        <div className="mt-4 rounded-md border p-3">
+          <span className="text-sm font-medium">Alat yang akan dipinjam</span>
+          <ul className="mt-2 space-y-1">
+            {items.map((item) => (
+              <li key={item.alat_id} className="flex items-center justify-between text-sm">
+                <span className="min-w-0 truncate">
+                  {item.nama_alat} <span className="font-mono text-xs text-gray-500">({item.inventaris})</span>
+                </span>
+                <span className="shrink-0 text-gray-700">× {item.jumlah}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <div className="mt-4">
           <label htmlFor="keperluan" className="text-sm font-medium">
@@ -131,76 +122,6 @@ export default function PeminjamanFormModal({ alatList, onClose, onSuccess }: Pr
             )}
           </div>
         )}
-
-        <div className="mt-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Alat</span>
-            <button
-              onClick={addRow}
-              className="rounded-md border px-2.5 py-1 text-xs font-medium hover:bg-gray-100"
-            >
-              + Tambah Alat
-            </button>
-          </div>
-
-          <div className="mt-2 space-y-2">
-            {rows.map((row) => {
-              const selected = alatList.find((item) => item.id === Number(row.alat_id))
-              const jumlahError =
-                selected !== undefined && (Number(row.jumlah) < 1 || Number(row.jumlah) > selected.jumlah)
-
-              return (
-                <div key={row.key} className="flex items-start gap-2">
-                  <select
-                    value={row.alat_id}
-                    onChange={(event) => updateRow(row.key, { alat_id: event.target.value })}
-                    className="min-w-0 flex-1 rounded-md border px-2 py-1.5 text-sm focus:border-gray-400 focus:outline-none"
-                  >
-                    <option value="">Pilih alat...</option>
-                    {alatList.map((item) => (
-                      <option key={item.id} value={item.id} disabled={item.ketersediaan !== 'tersedia'}>
-                        {item.nama_alat} ({item.inventaris})
-                        {item.ketersediaan !== 'tersedia' ? ' — tidak tersedia' : ''}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="number"
-                    min={1}
-                    max={selected?.jumlah}
-                    value={row.jumlah}
-                    onChange={(event) => updateRow(row.key, { jumlah: event.target.value })}
-                    className={`w-20 rounded-md border px-2 py-1.5 text-sm focus:outline-none ${
-                      jumlahError ? 'border-red-400' : 'focus:border-gray-400'
-                    }`}
-                    aria-label="Jumlah"
-                  />
-                  <button
-                    onClick={() => removeRow(row.key)}
-                    disabled={rows.length === 1}
-                    className="rounded-md border px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
-                    aria-label="Hapus baris"
-                  >
-                    ✕
-                  </button>
-                </div>
-              )
-            })}
-          </div>
-
-          {rows.some((row) => row.alat_id !== '') && (
-            <p className="mt-1 text-xs text-gray-500">
-              {rows
-                .filter((row) => row.alat_id !== '')
-                .map((row) => {
-                  const alat = alatList.find((item) => item.id === Number(row.alat_id))
-                  return alat ? `${alat.nama_alat}: maks ${alat.jumlah} unit` : null
-                })
-                .filter(Boolean)
-                .join(' • ')}
-            </p>
-          )}
-        </div>
 
         <div className="mt-6 flex justify-end gap-2">
           <button

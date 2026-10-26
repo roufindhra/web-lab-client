@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { Navbar } from "./Navbar";
 import { Sidebar, type NavItem } from "./Sidebar";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import CartDrawer from "@/components/CartDrawer";
 import Footer from "./Footer";
 
 type MenuItem = NavItem & { authRequired?: boolean };
@@ -12,6 +14,7 @@ const menuItems: MenuItem[] = [
   { label: "Beranda", path: "/" },
   { label: "Dashboard", path: "/dashboard", authRequired: true },
   { label: "Peminjaman Alat", path: "/alat", authRequired: true },
+  { label: "Sewa Alat", path: "/sewa" },
   { label: "Pembelajaran", path: "/akademik"},
   { label: "Riset", path:"/riset" },
   { label: "Design System Test", path: "/test" },
@@ -19,6 +22,7 @@ const menuItems: MenuItem[] = [
 
 export default function MainLayout() {
   const { isAuthenticated, user, logout } = useAuth();
+  const { items: cartItems, isCartOpen, openCart, closeCart } = useCart();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const visibleMenuItems: NavItem[] = menuItems.filter(
@@ -30,6 +34,8 @@ export default function MainLayout() {
       <Navbar
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         onLogout={() => void logout()}
+        cartCount={isAuthenticated ? cartItems.length : 0}
+        onOpenCart={isAuthenticated ? openCart : undefined}
         user={
           isAuthenticated && user
             ? { name: user.nama, role: user.role }
@@ -56,6 +62,8 @@ export default function MainLayout() {
           </div>
         </div>
       </div>
+
+      {isCartOpen && <CartDrawer onClose={closeCart} />}
     </div>
   );
 }

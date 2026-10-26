@@ -13,8 +13,8 @@ import {
   type PeminjamanStatus,
 } from '@/services'
 import { useAuth } from '@/contexts/AuthContext'
+import { useCart } from '@/contexts/CartContext'
 import AlatDetailModal from '../components/AlatDetailModal'
-import PeminjamanFormModal from '../components/PeminjamanFormModal'
 
 const KETERSEDIAAN_LABELS: Record<KetersediaanStatus, string> = {
   tersedia: 'Tersedia',
@@ -64,17 +64,20 @@ function formatWaktu(value: string): string {
 
 export default function AlatPage() {
   const { user } = useAuth()
+  const { items: cartItems, addItem, openCart } = useCart()
   const [peminjamanList, setPeminjamanList] = useState<Peminjaman[]>([])
   const [peminjamanMeta, setPeminjamanMeta] = useState<AlatLogListMeta | null>(null)
   const [peminjamanPage, setPeminjamanPage] = useState(1)
   const [katalog, setKatalog] = useState<KatalogAlat[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [expandedNama, setExpandedNama] = useState<string | null>(null)
   const [detailTarget, setDetailTarget] = useState<Alat | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const alatList = useMemo(() => katalog.flatMap((grup) => grup.items), [katalog])
+  const inCartQty = useMemo(
+    () => new Map(cartItems.map((item) => [item.alat_id, item.jumlah])),
+    [cartItems],
+  )
 
   const loadPeminjaman = useCallback((page: number) => {
     return peminjamanService.list(page).then((response) => {
@@ -107,16 +110,16 @@ export default function AlatPage() {
     }
   }, [loadPeminjaman, loadAlat, peminjamanPage])
 
+  useEffect(() => {
+    const refresh = () => void Promise.all([loadPeminjaman(1), loadAlat()])
+    window.addEventListener('peminjaman:created', refresh)
+    return () => window.removeEventListener('peminjaman:created', refresh)
+  }, [loadPeminjaman, loadAlat])
+
   const goToPeminjamanPage = (page: number) => {
     setIsLoading(true)
     setError(null)
     setPeminjamanPage(page)
-  }
-
-  const handlePengajuanSuccess = async () => {
-    setIsModalOpen(false)
-    goToPeminjamanPage(1)
-    await Promise.all([loadPeminjaman(1), loadAlat()])
   }
 
   const toggleExpand = (nama: string) => {
@@ -134,7 +137,7 @@ export default function AlatPage() {
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={openCart}
           className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
         >
           Ajukan Peminjaman
@@ -256,6 +259,7 @@ export default function AlatPage() {
                     <table className="w-full text-left text-sm">
                       <thead className="border-b bg-gray-50 text-xs uppercase text-gray-500">
                         <tr>
+                          <th className="px-4 py-2.5">Keranjang</th>
                           <th className="px-4 py-2.5">Inventaris</th>
                           <th className="px-4 py-2.5">Merk</th>
                           <th className="px-4 py-2.5">Tipe</th>
@@ -266,8 +270,34 @@ export default function AlatPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y">
-                        {grup.items.map((alat) => (
+                        {grup.items.map((alat) => {
+                          const cartQty = inCartQty.get(alat.id) ?? 0
+                          const isFull = cartQty >= alat.jumlah
+                          return (
                           <tr key={alat.id} className="hover:bg-white">
+                            <td className="px-4 py-2.5">
+                              <button
+                                onClick={() =>
+                                  addItem({
+                                    alat_id: alat.id,
+                                    nama_alat: alat.nama_alat,
+                                    inventaris: alat.inventaris,
+                                    max_jumlah: alat.jumlah,
+                                  })
+                                }
+                                disabled={alat.ketersediaan !== 'tersedia' || isFull}
+                                title={
+                                  alat.ketersediaan !== 'tersedia'
+                                    ? 'Alat tidak tersedia'
+                                    : isFull
+                                      ? 'Sudah ditambahkan ke keranjang'
+                                      : undefined
+                                }
+                                className="whitespace-nowrap rounded-md border px-2.5 py-1 text-xs font-medium hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+                              >
+                                {isFull ? '✓ Di keranjang' : '+ Keranjang'}
+                              </button>
+                            </td>
                             <td className="px-4 py-2.5 font-mono">{alat.inventaris}</td>
                             <td className="px-4 py-2.5">{alat.merk}</td>
                             <td className="px-4 py-2.5">{alat.tipe}</td>
@@ -291,7 +321,8 @@ export default function AlatPage() {
                               </button>
                             </td>
                           </tr>
-                        ))}
+                          )
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -301,14 +332,6 @@ export default function AlatPage() {
           })
         )}
       </div>
-
-      {isModalOpen && (
-        <PeminjamanFormModal
-          alatList={alatList}
-          onClose={() => setIsModalOpen(false)}
-          onSuccess={() => void handlePengajuanSuccess()}
-        />
-      )}
 
       {detailTarget && <AlatDetailModal alat={detailTarget} onClose={() => setDetailTarget(null)} />}
     </div>
