@@ -8,6 +8,7 @@ import AlatPage from '@/pages/Alat'
 import Pembelajaran from '@/pages/Pembelajaran'
 import Riset from '@/pages/Riset'
 import SewaPage from '@/pages/Sewa'
+import Akun from '@/pages/Akun'
 
 // Auth function
 import ProtectedRoute from '@/routes/ProtectedRoute'
@@ -31,6 +32,7 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="dashboard" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}><Dashboard /></ProtectedRoute>}/>
           <Route path="alat" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}> <AlatPage /> </ProtectedRoute>}/>
+          <Route path="akun" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}><Akun /></ProtectedRoute>}/>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         {/* cuma buat ngetes doang */}

@@ -75,6 +75,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-accent font-semibold text-xs text-primary">
               {user.name.substring(0, 2).toUpperCase()}
             </div>
+            <Link to="/akun">
+              <Button variant="outline" size="sm">
+                Akun
+              </Button>
+            </Link>
             {onLogout && (
               <Button variant="outline" size="sm" onClick={onLogout}>
                 Logout

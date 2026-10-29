@@ -43,4 +43,15 @@ export const authService = {
       removeToken()
     }
   },
+
+  async changePassword(payload: {
+    password: string
+    password_baru: string
+    password_baru_confirmation: string
+  }): Promise<void> {
+    await api<{ message: string }>('/api/client/ubah-password', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  },
 }
