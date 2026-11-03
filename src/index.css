@@ -3,7 +3,7 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #1a5e63;
+  --color-primary: #1A5E63;
   --color-primary-hover: #14494d;
   --color-secondary: #ff9800;
 

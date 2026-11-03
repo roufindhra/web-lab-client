@@ -18,7 +18,7 @@ export default function AgendaPraktikum({ agenda }: AgendaPraktikumProps) {
   )
 
   return (
-    <section className="bg-gray-50">
+    <section className="bg-surface-accent">
       <div className="mx-auto max-w-6xl px-4 py-16">
         <h2 className="text-3xl font-bold text-navy">Agenda Praktikum</h2>
         <p className="mt-2 text-gray-600">
