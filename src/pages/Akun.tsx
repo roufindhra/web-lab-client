@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 import { useAuth } from '@/contexts/AuthContext'
-import { authService, ApiError } from '@/services'
+import { authService } from '@/services'
+import { getFormErrorMessages } from '@/utils/errors'
 
 export default function Akun() {
   const { user } = useAuth()
@@ -88,9 +89,9 @@ function UbahPasswordCard() {
         setKonfirmasi('')
       })
       .catch((err) => {
-        setError(
-          err instanceof ApiError ? err.message : 'Gagal mengubah password.',
-        )
+        // Error validasi (422) tampil inline; error lain ditangani modal global.
+        const messages = getFormErrorMessages(err)
+        setError(messages.length > 0 ? messages.join(' ') : null)
       })
       .finally(() => setIsSaving(false))
   }

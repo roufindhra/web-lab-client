@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ApiError, sewaService, type SewaOption } from '@/services'
+import { sewaService, type SewaOption } from '@/services'
+import { getFormErrorMessages } from '@/utils/errors'
 import { useSewaCart } from '@/contexts/SewaCartContext'
 
 const formatRupiah = (value: number) =>
@@ -18,7 +19,6 @@ export default function SewaPage() {
   const { items: cartItems, addItem, setQty, removeItem, clear } = useSewaCart()
   const [katalog, setKatalog] = useState<SewaOption[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   const [nama, setNama] = useState('')
   const [noHp, setNoHp] = useState('')
@@ -37,8 +37,8 @@ export default function SewaPage() {
       .then((response) => {
         if (!cancelled) setKatalog(response.data)
       })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Gagal memuat katalog sewa.')
+      .catch(() => {
+        // Error sudah ditampilkan otomatis di modal global.
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false)
@@ -85,7 +85,9 @@ export default function SewaPage() {
       setSukses({ id: response.data.id, totalEstimasi: response.total_estimasi })
       clear()
     } catch (err) {
-      setSubmitError(err instanceof ApiError ? err.message : 'Terjadi kesalahan.')
+      // Error validasi (422) tampil inline; error lain ditangani modal global.
+      const messages = getFormErrorMessages(err)
+      setSubmitError(messages.length > 0 ? messages.join(' ') : null)
       setIsSubmitting(false)
     }
   }
@@ -122,8 +124,6 @@ export default function SewaPage() {
           Pengajuan akan diperiksa oleh laboran.
         </p>
       </div>
-
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
 
       <div className="mt-6 flex flex-col-reverse gap-6 lg:flex-row">
         <div className="min-w-0 flex-1">

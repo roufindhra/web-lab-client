@@ -1,4 +1,4 @@
-import { api } from './api'
+import { api, type ApiRequestOptions } from './api'
 
 export interface JadwalItem {
   id: number
@@ -24,12 +24,12 @@ export interface PraktikumItem {
   plugs: Omit<JadwalItem, 'praktikum'>[]
 }
 
-export function getPublicPraktikum() {
-  return api<{ data: PraktikumItem[] }>('/api/public/praktikum')
+export function getPublicPraktikum(options?: ApiRequestOptions) {
+  return api<{ data: PraktikumItem[] }>('/api/public/praktikum', options)
 }
 
-export function getPublicAgenda() {
-  return api<{ data: JadwalItem[] }>('/api/public/agenda')
+export function getPublicAgenda(options?: ApiRequestOptions) {
+  return api<{ data: JadwalItem[] }>('/api/public/agenda', options)
 }
 
 export interface AkademikMateri {

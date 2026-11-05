@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { ErrorProvider } from '@/contexts/ErrorContext'
 
 // Pages
 import MainLayout from '@/layouts/MainLayout'
@@ -19,25 +20,27 @@ import { DesignSystemTest } from "@/pages/designsystemtest"
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public access */}
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Landing />}/>
-          <Route path="akademik" element={<Pembelajaran />}/>
-          <Route path="riset" element={<Riset />}/>
-          <Route path="sewa" element={<SewaPage />}/>
-        </Route>
+      <ErrorProvider>
+        <Routes>
+          {/* Public access */}
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Landing />}/>
+            <Route path="akademik" element={<Pembelajaran />}/>
+            <Route path="riset" element={<Riset />}/>
+            <Route path="sewa" element={<SewaPage />}/>
+          </Route>
 
-        {/* Auth needed */}
-        <Route element={<MainLayout />}>
-          <Route path="dashboard" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}><Dashboard /></ProtectedRoute>}/>
-          <Route path="alat" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}> <AlatPage /> </ProtectedRoute>}/>
-          <Route path="akun" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}><Akun /></ProtectedRoute>}/>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-        {/* cuma buat ngetes doang */}
-        <Route path="/test" element={<DesignSystemTest />} />
-      </Routes>
+          {/* Auth needed */}
+          <Route element={<MainLayout />}>
+            <Route path="dashboard" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}><Dashboard /></ProtectedRoute>}/>
+            <Route path="alat" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}> <AlatPage /> </ProtectedRoute>}/>
+            <Route path="akun" element={<ProtectedRoute roles={['mahasiswa', 'asisten']}><Akun /></ProtectedRoute>}/>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+          {/* cuma buat ngetes doang */}
+          <Route path="/test" element={<DesignSystemTest />} />
+        </Routes>
+      </ErrorProvider>
     </BrowserRouter>
   );
 }

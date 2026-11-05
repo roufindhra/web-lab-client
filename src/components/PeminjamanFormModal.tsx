@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ApiError, peminjamanService, type PeminjamanOptions } from '@/services'
+import { peminjamanService, type PeminjamanOptions } from '@/services'
+import { getFormErrorMessages } from '@/utils/errors'
 import { useCart } from '@/contexts/CartContext'
 
 interface Props {
@@ -19,7 +20,9 @@ export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
     peminjamanService
       .options()
       .then(setOptions)
-      .catch(() => setError('Gagal memuat pilihan keperluan.'))
+      .catch(() => {
+        // Error sudah ditampilkan otomatis di modal global.
+      })
   }, [])
 
   const praktikumOptions = keperluan === 'praktikum' ? (options?.praktikum ?? []) : []
@@ -45,7 +48,9 @@ export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
       })
       onSuccess()
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Terjadi kesalahan.')
+      // Error validasi (422) tampil inline; error lain ditangani modal global.
+      const messages = getFormErrorMessages(err)
+      setError(messages.length > 0 ? messages.join(' ') : null)
       setIsSaving(false)
     }
   }
