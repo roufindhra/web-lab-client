@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   alatService,
-  ApiError,
   KONDISI_STATUSES,
   peminjamanService,
   type Alat,
@@ -72,7 +71,6 @@ export default function AlatPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [expandedNama, setExpandedNama] = useState<string | null>(null)
   const [detailTarget, setDetailTarget] = useState<Alat | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
   const inCartQty = useMemo(
     () => new Map(cartItems.map((item) => [item.alat_id, item.jumlah])),
@@ -96,10 +94,8 @@ export default function AlatPage() {
     let cancelled = false
 
     Promise.all([loadPeminjaman(peminjamanPage), loadAlat()])
-      .catch((err) => {
-        if (!cancelled) {
-          setError(err instanceof ApiError ? err.message : 'Gagal memuat data.')
-        }
+      .catch(() => {
+        // Error sudah ditampilkan otomatis di modal global.
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false)
@@ -118,7 +114,6 @@ export default function AlatPage() {
 
   const goToPeminjamanPage = (page: number) => {
     setIsLoading(true)
-    setError(null)
     setPeminjamanPage(page)
   }
 
@@ -143,8 +138,6 @@ export default function AlatPage() {
           Ajukan Peminjaman
         </button>
       </div>
-
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
 
       <h2 className="mt-8 text-xl font-bold">Pengajuan Peminjamanmu</h2>
       <div className="mt-4 overflow-x-auto rounded-lg border bg-white">

@@ -6,12 +6,13 @@ const subSections = ['Dosen', 'Jadwal', 'Materi'] as const
 
 export default function Pembelajaran() {
   const [praktikumList, setPraktikumList] = useState<AkademikPraktikum[] | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     getPublicAkademik()
       .then((response) => setPraktikumList(response.data))
-      .catch(() => setError('Gagal memuat data pembelajaran.'))
+      .catch(() => {
+        // Error sudah ditampilkan otomatis di modal global.
+      })
   }, [])
 
   const navIds = useMemo(
@@ -55,8 +56,7 @@ export default function Pembelajaran() {
         Praktikum, dosen pengampu, jadwal, dan susunan materi yang diajarkan di Lab SGG.
       </p>
 
-      {error && <p className="mt-6 text-sm text-red-600">{error}</p>}
-      {!praktikumList && !error && <p className="mt-6 text-sm text-gray-500">Memuat...</p>}
+      {!praktikumList && <p className="mt-6 text-sm text-gray-500">Memuat...</p>}
 
       {praktikumList && praktikumList.length === 0 && (
         <p className="mt-6 text-sm text-gray-500">Belum ada praktikum aktif.</p>

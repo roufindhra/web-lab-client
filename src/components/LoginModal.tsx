@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import { ApiError } from '@/services'
+import { getFormErrorMessages } from '@/utils/errors'
 
 interface LoginModalProps {
   open: boolean
@@ -34,7 +34,10 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
       onClose()
       navigate('/dashboard')
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Gagal login.')
+      // Error validasi (422, mis. "NIM atau password salah.") tampil inline;
+      // error lain ditangani modal global.
+      const messages = getFormErrorMessages(err)
+      setError(messages.length > 0 ? messages.join(' ') : null)
     } finally {
       setIsSubmitting(false)
     }
