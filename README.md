@@ -1,4 +1,9 @@
-# Developer and Architecture Guide
+# Lab SGG Client — Situs Publik
+
+**Proyek:** Lab SGG Client
+**Versi:** 1.0.0
+
+## Developer and Architecture Guide
 
 Karena sudah terlalu sering kita semua kebolak-balik antar project dan antar aplikasi, maka dibuatlah dokumentasi ini sebagai acuan developer untuk membangun, mengembangkan, dan (nantinya?) memelihara lab-sgg-client milik Laboratorium SUrvei Geodesi dan Geometri UPNVY.
 
