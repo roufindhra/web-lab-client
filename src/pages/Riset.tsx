@@ -1,3 +1,6 @@
+// TODO(riset): Halaman ini masih dalam pengembangan dan sengaja belum
+// dirutekan. Saat siap, tambahkan kembali rute /riset di src/App.tsx dan menu
+// "Riset" di src/layouts/MainLayout.tsx.
 export default function Riset () {
     return (
         <div className="mx-auto max-w-6xl px-4 py-12">

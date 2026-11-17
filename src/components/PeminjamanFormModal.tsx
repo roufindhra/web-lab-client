@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { peminjamanService, type PeminjamanOptions } from '@/services'
 import { getFormErrorMessages } from '@/utils/errors'
 import { useCart } from '@/contexts/CartContext'
+import { Button } from '@/components/ui/Button'
 
 interface Props {
   onClose: () => void
@@ -55,26 +56,46 @@ export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
     }
   }
 
+  const selectClass =
+    'mt-1 w-full rounded-md border border-gray-300 bg-surface px-3 py-2 text-sm text-surface-text focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
-        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-lg bg-white p-6"
+        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-xl bg-surface p-6 shadow-xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 className="text-lg font-bold">Ajukan Peminjaman Alat</h2>
-        <p className="mt-1 text-xs text-gray-500">
-          Pengajuan akan diperiksa oleh laboran. Statusnya bisa kamu lihat di daftar pengajuan.
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-surface-text">Ajukan Peminjaman Alat</h2>
+            <p className="mt-1 text-xs text-gray-500">
+              Pengajuan akan diperiksa oleh laboran. Statusnya bisa kamu lihat pada riwayat pengajuan.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Tutup"
+            className="rounded-md p-1 text-gray-400 transition-colors hover:bg-surface-container hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
 
-        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+        {error && (
+          <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>
+        )}
 
-        <div className="mt-4 rounded-md border p-3">
-          <span className="text-sm font-medium">Alat yang akan dipinjam</span>
+        <div className="mt-4 rounded-lg border border-gray-200 bg-surface-container/50 p-3">
+          <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Alat yang akan dipinjam
+          </span>
           <ul className="mt-2 space-y-1">
             {items.map((item) => (
-              <li key={item.alat_id} className="flex items-center justify-between text-sm">
-                <span className="min-w-0 truncate">
-                  {item.nama_alat} <span className="font-mono text-xs text-gray-500">({item.inventaris})</span>
+              <li key={item.alat_id} className="flex items-center justify-between gap-3 text-sm">
+                <span className="min-w-0 truncate text-surface-text">
+                  {item.nama_alat}{' '}
+                  <span className="font-mono text-xs text-gray-500">({item.inventaris})</span>
                 </span>
                 <span className="shrink-0 text-gray-700">× {item.jumlah}</span>
               </li>
@@ -83,8 +104,8 @@ export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
         </div>
 
         <div className="mt-4">
-          <label htmlFor="keperluan" className="text-sm font-medium">
-            Keperluan
+          <label htmlFor="keperluan" className="text-sm font-semibold text-surface-text">
+            Keperluan <span className="text-rose-500">*</span>
           </label>
           <select
             id="keperluan"
@@ -93,7 +114,7 @@ export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
               setKeperluan(event.target.value)
               setPraktikumSlug('')
             }}
-            className="mt-1 w-full rounded-md border px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
+            className={selectClass}
           >
             <option value="">Pilih keperluan...</option>
             {(options?.keperluan ?? []).map((option) => (
@@ -106,14 +127,14 @@ export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
 
         {keperluan === 'praktikum' && (
           <div className="mt-4">
-            <label htmlFor="praktikum" className="text-sm font-medium">
-              Praktikum
+            <label htmlFor="praktikum" className="text-sm font-semibold text-surface-text">
+              Praktikum <span className="text-rose-500">*</span>
             </label>
             <select
               id="praktikum"
               value={praktikumSlug}
               onChange={(event) => setPraktikumSlug(event.target.value)}
-              className="mt-1 w-full rounded-md border px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
+              className={selectClass}
             >
               <option value="">Pilih praktikum...</option>
               {praktikumOptions.map((option) => (
@@ -129,19 +150,12 @@ export default function PeminjamanFormModal({ onClose, onSuccess }: Props) {
         )}
 
         <div className="mt-6 flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-100"
-          >
+          <Button variant="outline" onClick={onClose}>
             Batal
-          </button>
-          <button
-            onClick={() => void handleSubmit()}
-            disabled={!isFormValid || isSaving}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
-          >
+          </Button>
+          <Button onClick={() => void handleSubmit()} disabled={!isFormValid || isSaving}>
             {isSaving ? 'Mengirim...' : 'Kirim Pengajuan'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

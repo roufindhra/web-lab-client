@@ -2,11 +2,12 @@ import "@radix-ui/colors"
 
 interface HeroProps {
   onLoginClick: () => void
+  isAuthenticated?: boolean
 }
 
 
 
-export default function Hero({ onLoginClick }: HeroProps) {
+export default function Hero({ onLoginClick, isAuthenticated = false }: HeroProps) {
   return (
     <section className="bg-surface-container text-black">
       <div className="mx-auto max-w-6xl px-4 py-24 text-center">
@@ -26,7 +27,7 @@ export default function Hero({ onLoginClick }: HeroProps) {
             onClick={onLoginClick}
             className="rounded-md bg-accent-orange px-6 py-3 font-semibold text-white transition hover:brightness-110"
           >
-            Login Mahasiswa / Asisten
+            {isAuthenticated ? 'Dashboard Akun' : 'Login Mahasiswa / Asisten'}
           </button>
           <a
             href="#praktikum"

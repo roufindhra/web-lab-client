@@ -180,20 +180,20 @@ function PraktikumSection({ praktikum, zebra }: { praktikum: AkademikPraktikum; 
       </h3>
       {praktikum.jadwal.length > 0 ? (
         <div className="mt-3 overflow-hidden rounded-lg border border-gray-200 bg-white">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-center text-sm">
             <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
               <tr>
-                <th className="px-4 py-2">Plug</th>
-                <th className="px-4 py-2">Hari</th>
-                <th className="px-4 py-2">Jam</th>
+                <th className="px-4 py-2 text-center font-semibold">Plug</th>
+                <th className="px-4 py-2 text-center font-semibold">Hari</th>
+                <th className="px-4 py-2 text-center font-semibold">Jam</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {praktikum.jadwal.map((jadwal) => (
                 <tr key={`${jadwal.plug}-${jadwal.hari}-${jadwal.jam_mulai}`}>
-                  <td className="px-4 py-2 font-medium text-gray-900">{jadwal.plug}</td>
-                  <td className="px-4 py-2 text-gray-700">{jadwal.hari}</td>
-                  <td className="px-4 py-2 text-gray-700">
+                  <td className="px-4 py-2 text-center align-middle font-medium text-gray-900">{jadwal.plug}</td>
+                  <td className="px-4 py-2 text-center align-middle text-gray-700">{jadwal.hari}</td>
+                  <td className="whitespace-nowrap px-4 py-2 text-center align-middle text-gray-700">
                     {jadwal.jam_mulai?.slice(0, 5)} – {jadwal.jam_selesai?.slice(0, 5)}
                   </td>
                 </tr>
