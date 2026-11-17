@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
+import { useSewaCart } from "@/contexts/SewaCartContext";
 import { Navbar, type NavItem } from "./Navbar";
 // import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import CartDrawer from "@/components/CartDrawer";
@@ -14,13 +15,19 @@ const menuItems: MenuItem[] = [
   { label: "Peminjaman Alat", path: "/alat", authRequired: true },
   { label: "Sewa Alat", path: "/sewa" },
   { label: "Pembelajaran", path: "/akademik"},
-  { label: "Riset", path:"/riset" },
+  // TODO(riset): menu disembunyikan sampai halaman Riset siap. Aktifkan
+  // kembali bersamaan dengan rute /riset di src/App.tsx.
+  // { label: "Riset", path:"/riset" },
   // { label: "Design System Test", path: "/test" },
 ];
 
 export default function MainLayout() {
   const { isAuthenticated, user, logout } = useAuth();
   const { items: cartItems, isCartOpen, openCart, closeCart } = useCart();
+  const { items: sewaItems } = useSewaCart();
+
+  const cartCount =
+    (isAuthenticated ? cartItems.length : 0) + sewaItems.length;
 
   const visibleMenuItems: NavItem[] = menuItems.filter(
     (item) => !item.authRequired || isAuthenticated,
@@ -40,8 +47,8 @@ export default function MainLayout() {
       <Navbar
         items={visibleMenuItems}
         onLogout={() => void logout()}
-        cartCount={isAuthenticated ? cartItems.length : 0}
-        onOpenCart={isAuthenticated ? openCart : undefined}
+        cartCount={cartCount}
+        onOpenCart={openCart}
         user={
           isAuthenticated && user
             ? { name: user.nama, role: user.role }
