@@ -11,7 +11,8 @@ interface CheckboxProps extends React.ComponentPropsWithoutRef<
 
 export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
   ({ className, label, error, id, ...props }, ref) => {
-    const generatedId = id || React.useId();
+    const fallbackId = React.useId();
+    const generatedId = id || fallbackId;
 
     return (
       <div className="relative z-10 flex flex-col gap-1">
