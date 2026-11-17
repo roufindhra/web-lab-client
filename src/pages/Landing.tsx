@@ -1,18 +1,23 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Hero from '../components/Hero'
 import ProfilLab from '../components/ProfilLab'
 import DaftarPraktikum from '../components/DaftarPraktikum'
 import AgendaPraktikum from '../components/AgendaPraktikum'
 import LoginModal from '@/components/LoginModal'
+import { useAuth } from '@/contexts/AuthContext'
 import { useError } from '@/contexts/ErrorContext'
 import { getPublicAgenda, getPublicPraktikum, type JadwalItem, type PraktikumItem } from '@/services/public'
 
 export default function Landing() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const { showError } = useError()
   const isLoginOpen = searchParams.get('login') === '1'
-  const openLogin = () => setSearchParams({ login: '1' }, { replace: true })
+  // Sudah login: langsung ke halaman akun. Belum login: buka modal login.
+  const handleLoginClick = () =>
+    isAuthenticated ? navigate('/akun') : setSearchParams({ login: '1' }, { replace: true })
   const closeLogin = () => setSearchParams({}, { replace: true })
   const [praktikum, setPraktikum] = useState<PraktikumItem[] | null>(null)
   const [agenda, setAgenda] = useState<JadwalItem[] | null>(null)
@@ -43,7 +48,7 @@ export default function Landing() {
 
   return (
     <>
-      <Hero onLoginClick={openLogin} />
+      <Hero onLoginClick={handleLoginClick} isAuthenticated={isAuthenticated} />
       <ProfilLab />
       <DaftarPraktikum praktikum={praktikum} />
       <AgendaPraktikum agenda={agenda} />

@@ -45,7 +45,7 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
   }, [showError])
 
   const handleClose = useCallback(() => {
-    // Catat dulu sebelum state dikosongkan: 401 → logout + kembali ke beranda dengan login terbuka.
+    // Catat dulu sebelum state dikosongkan: 401 → logout + kembali ke beranda tanpa membuka modal login.
     const wasUnauthorized = activeError?.kind === 'unauthorized'
     setActiveError(null)
     if (wasUnauthorized) {
