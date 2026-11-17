@@ -7,7 +7,6 @@ import Landing from '@/pages/Landing'
 import Dashboard from '@/pages/Dashboard'
 import AlatPage from '@/pages/Alat'
 import Pembelajaran from '@/pages/Pembelajaran'
-import Riset from '@/pages/Riset'
 import SewaPage from '@/pages/Sewa'
 import Akun from '@/pages/Akun'
 
@@ -26,7 +25,11 @@ export default function App() {
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Landing />}/>
             <Route path="akademik" element={<Pembelajaran />}/>
-            <Route path="riset" element={<Riset />}/>
+            {/* TODO(riset): halaman Riset masih dalam pengembangan dan belum
+                siap dirilis (lihat src/pages/Riset.tsx). Rute ini sengaja
+                dinonaktifkan; aktifkan kembali bersamaan dengan menu "Riset"
+                di src/layouts/MainLayout.tsx setelah kontennya siap. */}
+            {/* <Route path="riset" element={<Riset />}/> */}
             <Route path="sewa" element={<SewaPage />}/>
           </Route>
 
