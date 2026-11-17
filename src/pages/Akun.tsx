@@ -16,7 +16,7 @@ export default function Akun() {
   const { user } = useAuth()
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-6 p-4 md:p-6">
+    <div className="mx-auto w-full max-w-3xl space-y-6 p-4 md:p-6">
       <div>
         <h1 className="text-xl font-bold text-surface-text">Pengaturan Akun</h1>
         <p className="text-xs text-gray-500">
@@ -28,10 +28,12 @@ export default function Akun() {
         <CardHeader>
           <CardTitle>Informasi Akun</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-3">
+        <CardContent className="grid gap-4 sm:grid-cols-2">
           <InfoItem label="Nama" value={user?.nama} />
           <InfoItem label="NIM" value={user?.nim?.toString()} />
-          <InfoItem label="Surel" value={user?.surel ?? '-'} />
+          <div className="sm:col-span-2">
+            <InfoItem label="Surel" value={user?.surel ?? '-'} />
+          </div>
         </CardContent>
       </Card>
 
@@ -42,11 +44,11 @@ export default function Akun() {
 
 function InfoItem({ label, value }: { label: string; value?: string }) {
   return (
-    <div>
+    <div className="min-w-0">
       <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
         {label}
       </p>
-      <p className="text-sm text-surface-text">{value ?? '-'}</p>
+      <p className="break-words text-sm text-surface-text">{value ?? '-'}</p>
     </div>
   )
 }
